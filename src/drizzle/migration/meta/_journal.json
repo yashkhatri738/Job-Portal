@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1769261592943,
+      "tag": "0000_glossy_meteorite",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1770031040971,
+      "tag": "0001_medical_wiccan",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1770286647057,
+      "tag": "0002_military_zeigeist",
+      "breakpoints": true
+    }
+  ]
+}
