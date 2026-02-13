@@ -23,12 +23,13 @@ type Props = {
 const navigationLinks = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Profile", href: "/profile", icon: User },
-  { name: "Jobs", href: "/jobs", icon: Briefcase },
-  { name: "Post a Job", href: "/jobs/new", icon: Plus },
-  { name: "Saved Candidates", href: "/saved-candidates", icon: Bookmark},
+  // { name: "Jobs", href: "/jobs", icon: Briefcase },
+  // { name: "Post a Job", href: "/jobs/new", icon: Plus },
+  // { name: "Saved Candidates", href: "/saved-candidates", icon: Bookmark},
   { name: "Settings", href: "/settings", icon: Settings },
-  { name: "Plan & Billing", href: "/plan-billing", icon: CreditCard },
-  { name: "All Companies", href: "/companies", icon: Building },
+  { name: "apply for job", href: "/apply-for-job", icon: Plus },
+  // { name: "Plan & Billing", href: "/plan-billing", icon: CreditCard },
+  // { name: "All Companies", href: "/companies", icon: Building },
 ];
 const ApplicantSidebar = ({ applicant, user }: Props) => {
  const pathname = usePathname();

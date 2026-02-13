@@ -23,7 +23,7 @@ type Props = {
 const navigationLinks = [
   { name: "Dashboard", href: "/employer/dashboard", icon: LayoutDashboard },
   { name: "Profile", href: "/employer/profile", icon: User },
-  { name: "Jobs", href: "/employer/jobs/new", icon: Briefcase },
+  { name: "My Jobs", href: "/employer/myjobs", icon: Briefcase },
   { name: "Post a Job", href: "/employer/jobs", icon: Plus },
   { name: "Saved Candidates", href: "/employer/saved-candidates", icon: Bookmark},
   { name: "Settings", href: "/employer/settings", icon: Settings },

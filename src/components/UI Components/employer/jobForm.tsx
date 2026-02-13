@@ -30,10 +30,11 @@ import { useRouter } from "next/navigation";
 import { JobFormData, jobSchema } from "@/lib/schemaValidation/jobs.schema";
 import { JOB_LEVEL, JOB_TYPE, MIN_EDUCATION, SALARY_CURRENCY, SALARY_PERIOD, WORK_TYPE } from "@/config/constants";
 import Tiptap from "../text-editor";
+import { createJobDetails, updateJobDetails } from "@/lib/actions/employer/jobDetails";
 
 interface JobPostFormProps {
-  initialData?: any; // The job data fetched from DB
-  isEditMode?: boolean; // Flag to tell form what to do
+  initialData?: any; 
+  isEditMode?: boolean; 
 }
 
 export const JobForm = ({
@@ -44,14 +45,34 @@ export const JobForm = ({
     register,
     control,
     handleSubmit,
+    reset,
     formState: { errors, isDirty, isSubmitting },
   } = useForm({
     resolver: zodResolver(jobSchema),
+    defaultValues: initialData,
   });
 
   const router = useRouter();
 
-  const handleFormSubmit = async (data: JobFormData) => { };
+  const handleFormSubmit = async (data: JobFormData) => {
+    let res;
+    if (isEditMode && initialData?.id) {
+        res = await updateJobDetails(initialData.id, data);
+    } else {
+        res = await createJobDetails(data);
+    }
+
+    if (res.status === "SUCCESS") {
+      toast.success(res.message);
+      if (!isEditMode) {
+          reset();
+      }
+      router.push("/employer/jobs");
+      router.refresh();
+    } else {
+      toast.error(res.message);
+    }
+   };
 
   return (
     <Card className="w-full max-w-4xl mx-auto">

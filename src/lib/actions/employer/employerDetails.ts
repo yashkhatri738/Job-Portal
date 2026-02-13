@@ -61,8 +61,6 @@ export const updateEmployerProfileAction = async (
       })
       .where(eq(employers.id, currentUser.id));
 
-    console.log("employers ", updatedEmployer);
-
     if (avatarUrl) {
       await db
         .update(users)
@@ -71,7 +69,6 @@ export const updateEmployerProfileAction = async (
         })
         .where(eq(users.id, currentUser.id));
     }
-    console.log("avatarUrl ", avatarUrl);
     return { status: "SUCCESS", message: "Profile updated successfully" };
   } catch (error) {
     return {

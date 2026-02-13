@@ -19,7 +19,6 @@ export default async function RootLayout({
   const applicantId = user.id;
 
   const applicantDetails = await getApplicantDetails(applicantId);
-  console.log("Applicant Details:", applicantDetails);
 
   return <>
    <div className="min-h-screen bg-background">
