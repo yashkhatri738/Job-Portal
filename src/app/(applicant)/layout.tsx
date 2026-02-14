@@ -10,10 +10,9 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const user = await getCurrentUser();
-
-  console.log("Current User in Applicant Layout:", user);
-  if(!user) return redirect('/login');
   
+  if(!user) return redirect('/login');
+  const userName = user.userName;
   if(user.role !== "applicant") return redirect('/login');
 
   const applicantId = user.id;
@@ -23,7 +22,7 @@ export default async function RootLayout({
   return <>
    <div className="min-h-screen bg-background">
       <nav className="fixed top-0 left-0 w-full h-16 z-50 bg-background border-b">
-        <Navbar />
+        <Navbar userName={userName} />
       </nav>
       <div className="flex">
         <aside className="fixed top-16 left-0 w-64 h-[calc(100vh-4rem)] border-r bg-background">

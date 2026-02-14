@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation"
 const Navbar = ({
   companyLogo,
   userAvatar,
-  userName = "User",
+  userName,
 }: {
   companyLogo?: string
   userAvatar?: string
@@ -22,6 +22,7 @@ const Navbar = ({
 }) => {
   const router = useRouter()
 
+  console.log("Navbar Props:", { companyLogo, userAvatar, userName })
   return (
     <nav className="flex items-center justify-between px-6 py-3 border-b bg-white">
       {/* Left Side - Logo */}
@@ -44,7 +45,7 @@ const Navbar = ({
           <Avatar className="cursor-pointer">
             <AvatarImage src={userAvatar} alt={userName} />
             <AvatarFallback>
-              {userName.charAt(0).toUpperCase()}
+              {userName?.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
