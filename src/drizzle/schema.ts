@@ -10,6 +10,7 @@ import {
   varchar,
   year,
   boolean,
+  uniqueIndex,
 } from "drizzle-orm/mysql-core";
 
 export const users = mysqlTable("users", {
@@ -146,3 +147,67 @@ export const jobsRelations = relations(jobs, ({ one }) => ({
     references: [employers.id],
   }),
 }));
+
+
+export const jobApplications = mysqlTable(
+  "job_applications",
+  {
+    id: int("id").autoincrement().primaryKey(),
+
+    jobId: int("job_id")
+      .notNull()
+      .references(() => jobs.id, { onDelete: "cascade" }),
+
+    applicantId: int("applicant_id")
+      .notNull()
+      .references(() => applicants.id, { onDelete: "cascade" }),
+
+    // Snapshot fields
+    name: varchar("name", { length: 255 }).notNull(),
+    email: varchar("email", { length: 255 }).notNull(),
+    phoneNumber: varchar("phone_number", { length: 50 }),
+
+    resumeUrl: text("resume_url").notNull(),
+    coverLetter: text("cover_letter"),
+
+    status: mysqlEnum("status", [
+      "applied",
+      "reviewing",
+      "shortlisted",
+      "rejected",
+      "selected",
+    ])
+      .default("applied")
+      .notNull(),
+
+    employerNotes: text("employer_notes"),
+
+    appliedAt: timestamp("applied_at").defaultNow().notNull(),
+
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .onUpdateNow()
+      .notNull(),
+  },
+  (table) => ({
+    uniqueApply: uniqueIndex("unique_apply").on(
+      table.jobId,
+      table.applicantId
+    ),
+  })
+);
+
+export const jobApplicationsRelations = relations(
+  jobApplications,
+  ({ one }) => ({
+    job: one(jobs, {
+      fields: [jobApplications.jobId],
+      references: [jobs.id],
+    }),
+
+    applicant: one(applicants, {
+      fields: [jobApplications.applicantId],
+      references: [applicants.id],
+    }),
+  })
+);

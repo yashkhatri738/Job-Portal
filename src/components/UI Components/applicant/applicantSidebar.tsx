@@ -27,7 +27,7 @@ const navigationLinks = [
   // { name: "Post a Job", href: "/jobs/new", icon: Plus },
   // { name: "Saved Candidates", href: "/saved-candidates", icon: Bookmark},
   { name: "Settings", href: "/settings", icon: Settings },
-  { name: "apply for job", href: "/apply-for-job", icon: Plus },
+  { name: "status", href: "/status", icon: Briefcase },
   // { name: "Plan & Billing", href: "/plan-billing", icon: CreditCard },
   // { name: "All Companies", href: "/companies", icon: Building },
 ];

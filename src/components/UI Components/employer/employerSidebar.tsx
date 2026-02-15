@@ -25,7 +25,7 @@ const navigationLinks = [
   { name: "Profile", href: "/employer/profile", icon: User },
   { name: "My Jobs", href: "/employer/myjobs", icon: Briefcase },
   { name: "Post a Job", href: "/employer/jobs", icon: Plus },
-  { name: "Saved Candidates", href: "/employer/saved-candidates", icon: Bookmark},
+  { name: "Candidates", href: "/employer/candidates", icon: Bookmark},
   { name: "Settings", href: "/employer/settings", icon: Settings },
   { name: "Plan & Billing", href: "/employer/plan-billing", icon: CreditCard },
   { name: "All Companies", href: "/employer/companies", icon: Building },

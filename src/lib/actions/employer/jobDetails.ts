@@ -5,12 +5,11 @@ import { getCurrentUser } from "../auth.queries";
 import { db } from "@/config/db";
 import { jobs, employers } from "@/drizzle/schema";
 import { jobSchema } from "@/lib/schemaValidation/jobs.schema";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, or, like } from "drizzle-orm";
 
-export const createJobDetails = async (data : JobFormData) => {
+export const createJobDetails = async (data: JobFormData) => {
     try {
-
-        const { success, data: jobData, error} = jobSchema.safeParse(data);
+        const { success, data: jobData } = jobSchema.safeParse(data);
         if (!success) {
             return { status: "ERROR", message: "Invalid data" };
         }
@@ -23,11 +22,7 @@ export const createJobDetails = async (data : JobFormData) => {
         await db.insert(jobs).values({
             ...jobData,
             employersId: user.id,
-        }); 
-
-        if (error) {
-            return { status: "ERROR", message: "Something went wrong, please try again" };
-        }   
+        });
 
         return { status: "SUCCESS", message: "Job created successfully" };
     } catch (error) {
@@ -36,20 +31,33 @@ export const createJobDetails = async (data : JobFormData) => {
     }
 };
 
-export const getJobDetails = async () => {
+
+export const getJobDetails = async (search?: string) => {
     try {
         const user = await getCurrentUser();
         if (!user) {
             throw new Error("Unauthorized");
         }
 
-        const jobDetails = await db.select().from(jobs).where(eq(jobs.employersId, user.id));
+        const query = db.select().from(jobs).where(
+            and(
+                eq(jobs.employersId, user.id),
+                search ? or(
+                    like(jobs.title, `%${search}%`),
+                    like(jobs.description, `%${search}%`),
+                    like(jobs.tags, `%${search}%`)
+                ) : undefined
+            )
+        );
+
+        const jobDetails = await query;
         return jobDetails;
     } catch (error) {
         console.error("Error getting job details", error);
         return { status: "ERROR", message: "Something went wrong, please try again" };
     }
 };
+
 
 export const getJobDetailsById = async (id: number) => {
     try {
@@ -89,19 +97,23 @@ export const getJobWithEmployer = async (id: number) => {
     }
 };
 
-export const getAllJobs = async () => {
+export const getAllJobs = async (search?: string) => {
     try {
-        const user = await getCurrentUser();
-        if (!user) {
-            throw new Error("Unauthorized");
-        }
-
+        // getAllJobs might be public or role-agnostic, but we'll follow previous pattern
         const allJobs = await db.select({
             job: jobs,
             employer: employers
         })
         .from(jobs)
         .leftJoin(employers, eq(jobs.employersId, employers.id))
+        .where(
+            search ? or(
+                like(jobs.title, `%${search}%`),
+                like(jobs.description, `%${search}%`),
+                like(jobs.tags, `%${search}%`),
+                like(employers.name, `%${search}%`)
+            ) : undefined
+        )
         .orderBy(desc(jobs.createdAt));
         
         return allJobs;
@@ -110,6 +122,7 @@ export const getAllJobs = async () => {
         return [];
     }
 };
+
 
 export const deleteJobDetails = async (id: number) => {
     try {
