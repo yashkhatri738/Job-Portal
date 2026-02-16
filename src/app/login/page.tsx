@@ -9,19 +9,19 @@ import {
   CardHeader,
   CardTitle,
   CardContent,
-  CardFooter,
 } from "@/components/ui/card";
 import {
   User,
-  UserPlus,
   Mail,
   Lock,
   Eye,
   EyeOff,
+  ArrowLeft,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { loginAction } from "@/lib/actions/login.action";
-import { toast } from "@/components/ui/sonner";
+import { toast as sonnerToast } from "sonner";
 import { LoginUserData, loginUserSchema} from "@/lib/schemaValidation/auth.schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -31,7 +31,6 @@ const Login: React.FC = () => {
   const {
       register,
       handleSubmit,
-      watch,
       formState: { errors },
     } = useForm({
       resolver: zodResolver(loginUserSchema),
@@ -45,97 +44,128 @@ const Login: React.FC = () => {
       const result = await loginAction(data);
       if(result.status === "SUCCESS") {
         const role = (result as any).role ?? data.role;
+        sonnerToast.success(result.message);
         if(role === "applicant"){
           router.push("/dashboard");
         } else {
           router.push("/employer/dashboard");
         }
+      } else {
+        sonnerToast.error(result.message);
       }
-      if(result.status === "SUCCESS") toast.success(result.message);
-      else toast.error(result.message);
     } catch (err) {
-      toast.error("Login failed: " + (err instanceof Error ? err.message : String(err)));
+      sonnerToast.error("Login failed: " + (err instanceof Error ? err.message : String(err)));
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50 p-4">
-      <Card className="w-full max-w-md shadow-lg border border-gray-200">
-        <CardHeader>
-          <div className="flex justify-center items-center gap-2">
-            <UserPlus className="h-6 w-6 text-primary" />
-            <CardTitle className="text-2xl font-semibold">
-              Login Your Account
-            </CardTitle>
+    <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden bg-slate-50">
+      {/* Background with Professional Palette */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="/hero.png"
+          alt="Background"
+          fill
+          className="object-cover blur-[4px] opacity-40"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-100/40 via-blue-50/50 to-white/80"></div>
+        {/* Professional Glows */}
+        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-400/10 rounded-full blur-[100px]"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-400/10 rounded-full blur-[100px]"></div>
+      </div>
+
+      {/* Back to Home link */}
+      <Link href="/" className="absolute top-8 left-8 z-20 flex items-center gap-2 text-gray-600 hover:text-blue-600 font-bold transition-colors group">
+        <div className="w-10 h-10 rounded-full bg-white/80 flex items-center justify-center shadow-sm group-hover:shadow-md transition-all">
+          <ArrowLeft className="h-5 w-5" />
+        </div>
+        <span>Back to Home</span>
+      </Link>
+
+      <Card className="relative z-10 w-full max-w-md shadow-2xl border-white/50 bg-white/70 backdrop-blur-xl rounded-[2.5rem] overflow-hidden">
+        <CardHeader className="pt-12 pb-8 text-center px-8">
+          <div className="flex justify-center mb-6">
+            <div className="bg-blue-600 p-4 rounded-3xl shadow-xl shadow-blue-200/50 transform rotate-3">
+               <User className="h-8 w-8 text-white -rotate-3" />
+            </div>
           </div>
+          <CardTitle className="text-3xl font-extrabold text-gray-900 tracking-tight">
+            Welcome Back
+          </CardTitle>
+          <p className="text-gray-500 mt-2 font-medium">Log in to continue your career journey</p>
         </CardHeader>
 
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <CardContent className="px-10 pb-12">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Email */}
-            <div className="flex flex-col space-y-1">
-              <Label htmlFor="email">Email Address</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+            <div className="space-y-2.5">
+              <Label htmlFor="email" className="text-sm font-bold text-gray-700 ml-1">Email Address</Label>
+              <div className="relative group">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
                 <Input
                   id="email"
                   type="email"
-                  placeholder="Enter your email"
-                  className="pl-9"
+                  placeholder="name@example.com"
+                  className="pl-12 h-14 bg-white/50 border-gray-100 rounded-2xl focus:border-blue-400 focus:ring-blue-100 transition-all text-base font-medium placeholder:text-gray-400"
                   required {...register("email")}
                 />
               </div>
               {errors.email && (
-                <p className="text-sm text-red-600 mt-1">{errors.email.message}</p>
+                <p className="text-xs text-red-500 font-bold ml-1">{errors.email.message as string}</p>
               )}
             </div>
 
             {/* Password */}
-            <div className="flex flex-col space-y-1">
-              <Label htmlFor="password">Password</Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+            <div className="space-y-2.5">
+              <div className="flex items-center justify-between ml-1">
+                <Label htmlFor="password" className="text-sm font-bold text-gray-700">Password</Label>
+                <Link href="#" className="text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors">Forgot password?</Link>
+              </div>
+              <div className="relative group">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
-                  placeholder="Enter password"
-                  className="pl-9 pr-10"
+                  placeholder="••••••••"
+                  className="pl-12 pr-12 h-14 bg-white/50 border-gray-100 rounded-2xl focus:border-blue-400 focus:ring-blue-100 transition-all text-base font-medium placeholder:text-gray-400"
                   required {...register("password")}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-600 transition-colors p-1"
                 >
                   {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
+                    <EyeOff className="h-5 w-5" />
                   ) : (
-                    <Eye className="h-4 w-4" />
+                    <Eye className="h-5 w-5" />
                   )}
                 </button>
               </div>
               {errors.password && (
-                <p className="text-sm text-red-600 mt-1">{errors.password.message}</p>
+                <p className="text-xs text-red-500 font-bold ml-1">{errors.password.message as string}</p>
               )}
             </div>
 
             {/* Submit Button */}
-            <CardFooter className="flex flex-col items-center gap-3 px-0">
-              <Button type="submit" className="w-full mt-2">
-                Login
+            <div className="pt-4">
+              <Button type="submit" className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg rounded-2xl shadow-xl shadow-blue-200 transition-all active:scale-[0.98]">
+                Sign In
               </Button>
+            </div>
 
-              {/* 👇 Add this line below */}
-              <p className="text-sm text-gray-600">
-                If you have not an account?
+            <div className="text-center pt-2">
+              <p className="text-sm text-gray-500 font-medium">
+                Don't have an account?{" "}
                 <Link
                   href="/register"
-                  className="text-primary font-medium hover:underline"
+                  className="text-blue-600 font-bold hover:underline underline-offset-4"
                 >
-                  Register here
+                  Create one now
                 </Link>
               </p>
-            </CardFooter>
+            </div>
           </form>
         </CardContent>
       </Card>
